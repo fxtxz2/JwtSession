@@ -1,0 +1,11 @@
+spring:
+  data:
+    redis:
+      host: 00.000.000.000
+      port: 6379
+      password: ${REDIS_PW}
+      database: 0
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/demo?sslMode=REQUIRED&characterEncoding=UTF-8&connectionTimeZone=GMT%2B8&forceConnectionTimeZoneToSession=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PW}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserRoleMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.model.UserRole">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result property="roleId" column="role_id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+    </resultMap>
+    <sql id="BaseColumns">
+        id, role_id, user_id
+    </sql>
+    <insert id="insertUserRole" useGeneratedKeys="true" keyProperty="id">
+        insert into user_role (user_id, role_id)
+        values (#{userRole.userId}, #{userRole.roleId})
+    </insert>
+
+    <select id="findUserRoleByUserIdAndRoleId" resultMap="BaseResultMap">
+        select <include refid="BaseColumns"/> from user_role where user_id = #{userId} and role_id = #{roleId}
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: demo
+  session:
+    redis:
+      flush-mode: on_save
+      namespace: demo:session
+    timeout: P30D
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    deserialization:
+      # 忽略json中多余字段
+      fail-on-unknown-properties: false
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        same-site: strict
+        secure: true
+        http-only: true
+        path: ${spring.mvc.servlet.path}
+app:
+  cookie:
+    jwt:
+      name: ${spring.application.name}
+      expiration: 86400000 # 单位是毫秒
+      secret: zhouShippinglsosmdlfjhkashjhgkfggdfgxxxxxdsfawdfaslsosmdlfjhkaslflahlhasjfghlasdjlhfzhouShippinglsosmdlfjhkaslflahlhasjfghlasdjlhf
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml

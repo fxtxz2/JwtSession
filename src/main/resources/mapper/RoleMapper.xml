@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.model.Role">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result property="code" column="code" jdbcType="VARCHAR" javaType="java.lang.String"/>
+    </resultMap>
+    <sql id="BaseColumns">
+        id, name, code
+    </sql>
+    <sql id="BaseJoinColumns">
+        role.id, role.name, role.code
+    </sql>
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="id">
+        insert into role (name, code)
+        values (#{role.name}, #{role.code})
+    </insert>
+
+    <select id="findRoleByCode" resultMap="BaseResultMap">
+        select <include refid="BaseColumns"/> from role where code = #{code}
+    </select>
+    <select id="findRoleByUserId" resultMap="BaseResultMap">
+        select <include refid="BaseJoinColumns"/> from role
+        inner join user_role
+        on user_role.user_id = #{userId} and user_role.role_id = role.id
+    </select>
+
+</mapper>
