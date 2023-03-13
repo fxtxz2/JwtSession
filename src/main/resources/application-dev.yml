@@ -1,7 +1,7 @@
 spring:
   data:
     redis:
-      host: 00.000.000.000
+      host: ${REDIS_HOST:127.0.0.1}
       port: 6379
       password: ${REDIS_PW}
       database: 0

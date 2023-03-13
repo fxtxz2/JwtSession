@@ -20,7 +20,7 @@ server:
         same-site: strict
         secure: true
         http-only: true
-        path: ${spring.mvc.servlet.path}
+#        path: ${spring.mvc.servlet.path}
 app:
   cookie:
     jwt:

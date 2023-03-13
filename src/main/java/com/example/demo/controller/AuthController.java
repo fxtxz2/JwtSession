@@ -7,13 +7,19 @@ import com.example.demo.vo.LoginReq;
 import com.example.demo.vo.UserInfoRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,22 +27,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Resource
     private AuthenticationManager authenticationManager;
+    @Resource
+    private SecurityContextRepository securityContextRepository;
+
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
     @Resource
     private JwtUtils jwtUtils;
     @PostMapping("/login")
-    public ResponseEntity<Result> authenticateUser(@RequestBody LoginReq loginRequest, HttpSession httpSession) throws JsonProcessingException {
+    public ResponseEntity<Result> authenticateUser(@RequestBody LoginReq loginRequest, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.unauthenticated(
+                loginRequest.getUsername(), loginRequest.getPassword());
+        Authentication authentication = authenticationManager.authenticate(token);
+        SecurityContext context = securityContextHolderStrategy.createEmptyContext();
+        context.setAuthentication(authentication);
+        securityContextRepository.saveContext(context, request, response);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("会话id:" + httpSession.getId());
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
