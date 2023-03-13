@@ -55,7 +55,7 @@ public class SecurityConfiguration {
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.cors().and().csrf().and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .securityContext(securityContext -> securityContext
                         .securityContextRepository(securityContextRepository())
@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/user/greetings").hasAuthority(RoleEnum.ADMIN.getCode())
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/role/add", "/user/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/csrf").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

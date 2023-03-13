@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.comm.JwtUtils;
 import com.example.demo.comm.Result;
 import com.example.demo.comm.UserDetailsImpl;
+import com.example.demo.model.CsrfResponse;
 import com.example.demo.vo.LoginReq;
 import com.example.demo.vo.UserInfoRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,10 +21,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,6 +40,12 @@ public class AuthController {
 
     @Resource
     private JwtUtils jwtUtils;
+
+    @GetMapping("/csrf")
+    public CsrfResponse csrf(@RequestAttribute("_csrf") CsrfToken csrf) {
+        return CsrfResponse.builder().token(csrf.getToken()).build();
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Result> authenticateUser(@RequestBody LoginReq loginRequest, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 
